@@ -20,12 +20,14 @@ def cosine_sim(a,b):
 
 def search(query, top_k = 3, threshold=0.45):
     q_emb = model.encode(query)
-    scores = [
-        (cosine_sim(q_emb, emb), doc)
-        for emb, doc in zip(doc_embeddings, documents)
-        if cosine_sim(q_emb, emb) >= threshold
-    ]
-    return sorted(scores, reverse=True)[:top_k]
+    results = []
+    
+    for emb, doc in zip (doc_embeddings, documents):
+        score = cosine_sim(q_emb, emb)
+        if score >= threshold:
+            results.append((score, doc))
+
+    return sorted(results, reverse=True)[:top_k]
 
 results = search("How do I submit tax returns?")
 for score, doc in results:
