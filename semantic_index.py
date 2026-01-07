@@ -1,4 +1,5 @@
 from sentence_transformers import SentenceTransformer
+from sklearn.cluster import KMeans
 import numpy as np
 
 model = SentenceTransformer("all-MiniLM-L6-v2")
@@ -11,6 +12,7 @@ documents = [
     "Fine-tuning large language models",
     "Agentic RAG architecture",
     "Deploying AI models on cloud infrastructure",
+    "This is a random unrelated sentence about cooking pasta",
 ]
 
 doc_embeddings = model.encode(documents)
@@ -29,10 +31,15 @@ def search(query, top_k = 3, threshold=0.45):
 
     return sorted(results, reverse=True)[:top_k]
 
-results = search("How do I submit tax returns?")
-for score, doc in results:
-    print(f"{score:.3f} → {doc}")
+kmeans = KMeans(n_clusters=3, random_state=42)
+labels = kmeans.fit_predict(doc_embeddings) 
 
-print(search("tax filing procedure"))
-print(search("AI deployment"))
-print(search("guitar tuning"))
+clusters = {}
+
+for label,doc in zip(labels, documents):
+    clusters.setdefault(label, []).append(doc)
+
+for cluster_id, docs in clusters.items():
+    print(f"\nCluster {cluster_id}")
+    for d in docs:
+        print("-", d)
