@@ -12,7 +12,7 @@ documents = [
     "Fine-tuning large language models",
     "Agentic RAG architecture",
     "Deploying AI models on cloud infrastructure",
-    "This is a random unrelated sentence about cooking pasta",
+    "Boil pasta in salted water and add tomato sauce",
 ]
 
 doc_embeddings = model.encode(documents)
@@ -43,3 +43,15 @@ for cluster_id, docs in clusters.items():
     print(f"\nCluster {cluster_id}")
     for d in docs:
         print("-", d)
+
+
+centroids = kmeans.cluster_centers_
+
+print("\n--- Distance to cluster centroid ---")
+
+for idx, (doc, label) in enumerate(zip(documents, labels)):
+    emb = doc_embeddings[idx]
+    center = centroids[label]
+    distance = np.linalg.norm(emb - center)
+
+    print(f"{distance:.3f} → {doc}")
